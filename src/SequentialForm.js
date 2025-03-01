@@ -38,6 +38,8 @@ const SequentialForm = () => {
   });
   const [showSwipeHint, setShowSwipeHint] = useState(true);
   const [attemptedNext, setAttemptedNext] = useState(false);
+  const [backendResponse, setBackendResponse] = useState(null);
+  const [submissionError, setSubmissionError] = useState('');
 
   const [googleScriptLoaded, setGoogleScriptLoaded] = useState(false);
   const addressInputRef = useRef(null);
@@ -297,20 +299,44 @@ const SequentialForm = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Only proceed with submission if user clicked the submit button
-    // This prevents auto-submission when simply navigating to step 8
     if (currentStep === 7) {
       setIsSubmitting(true);
+      setSubmissionError('');
       
-      // Simulate form submission
-      setTimeout(() => {
-        console.log('Form submitted:', formData);
+      try {
+        console.log('Submitting form data to backend:', formData);
+        
+        // Send data to the backend via ngrok URL
+        const response = await fetch('https://a950-103-176-126-236.ngrok-free.app/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Server responded with status: ${response.status}`);
+        }
+        
+        const responseData = await response.json();
+        console.log('Response from server:', responseData);
+        
+        // Store the response data
+        setBackendResponse(responseData);
+        
+        // Move to thank you page after successful submission
+        setCurrentStep(8);
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        setSubmissionError('There was a problem submitting your information. Please try again.');
+      } finally {
         setIsSubmitting(false);
-        setCurrentStep(8); // Move to thank you page after submission
-      }, 2000);
+      }
     }
   };
 
@@ -848,9 +874,59 @@ const SequentialForm = () => {
         return (
           <div className="form-field-container">
             <h2 className="text-xl font-bold text-center">Thank you!</h2>
-            <p className="text-center mt-3">
-              We've received your information and will be in touch soon.
-            </p>
+            
+            {submissionError ? (
+              <div className="mt-4 p-4 bg-red-100 text-red-800 rounded-lg">
+                <p className="text-center">{submissionError}</p>
+                <div className="mt-4 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(7)}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              </div>
+            ) : isSubmitting ? (
+              <div className="mt-4 flex flex-col items-center">
+                <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
+                <p className="mt-2 text-center">Processing your information...</p>
+              </div>
+            ) : backendResponse ? (
+              <div className="mt-4">
+                <p className="text-center mb-4">We've received your information and created your custom solar assessment.</p>
+                
+                {backendResponse.savings && (
+                  <div className="bg-green-50 p-4 rounded-lg mb-4">
+                    <h3 className="font-bold text-green-800">Estimated Savings</h3>
+                    <p className="text-2xl font-bold text-green-600">${backendResponse.savings}/year</p>
+                  </div>
+                )}
+                
+                {backendResponse.recommendation && (
+                  <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                    <h3 className="font-bold text-blue-800">Our Recommendation</h3>
+                    <p>{backendResponse.recommendation}</p>
+                  </div>
+                )}
+                
+                <div className="mt-6 flex justify-center">
+                  <a 
+                    href={backendResponse.reportUrl || '#'} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    View Full Report
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <p className="text-center mt-3">
+                We've received your information and will be in touch soon.
+              </p>
+            )}
           </div>
         );
     }
