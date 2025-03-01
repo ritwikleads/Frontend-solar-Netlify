@@ -47,23 +47,74 @@ const SequentialForm = () => {
   useEffect(() => {
     // Only load the script once and when we're close to needing it
     if (!googleScriptLoaded && (currentStep === 2 || currentStep === 3)) {
-      // Get API key from environment variables safely - prevents secrets scanning issues
-      const apiKey = process.env.REACT_APP_MAPS_KEY || '';
+      // Add loading indicator for better UX
+      const loadingIndicator = document.createElement('p');
+      loadingIndicator.id = 'maps-loading-indicator';
+      loadingIndicator.innerText = 'Loading Google Maps...';
+      loadingIndicator.style.color = '#666';
+      loadingIndicator.style.fontSize = '14px';
+      loadingIndicator.style.margin = '5px 0';
       
-      const googleMapScript = document.createElement('script');
-      googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-      googleMapScript.async = true;
-      googleMapScript.defer = true;
-      googleMapScript.onload = () => {
-        setGoogleScriptLoaded(true);
-      };
-      window.document.body.appendChild(googleMapScript);
+      // Fetch the API key from our secure Netlify Function
+      fetch('/.netlify/functions/get-maps-key')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`API key fetch failed with status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (!data.apiKey) {
+            throw new Error('No API key received from server');
+          }
+          
+          console.log('Successfully fetched Maps API key, loading script...');
+          
+          const googleMapScript = document.createElement('script');
+          googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${data.apiKey}&libraries=places&callback=initGoogleMaps`;
+          googleMapScript.async = true;
+          googleMapScript.defer = true;
+          
+          // Define a global callback function for the script
+          window.initGoogleMaps = () => {
+            console.log('Google Maps initialized successfully');
+            setGoogleScriptLoaded(true);
+            const indicator = document.getElementById('maps-loading-indicator');
+            if (indicator) indicator.remove();
+          };
+          
+          // Add error handling for the script
+          googleMapScript.onerror = () => {
+            console.error('Failed to load Google Maps script');
+            const indicator = document.getElementById('maps-loading-indicator');
+            if (indicator) {
+              indicator.innerText = 'Failed to load Google Maps. Please enter address manually.';
+              indicator.style.color = '#e53e3e';
+            }
+          };
+          
+          window.document.body.appendChild(googleMapScript);
+        })
+        .catch(error => {
+          console.error('Error in Google Maps initialization:', error);
+          setGoogleScriptLoaded(false);
+          // Show a fallback message to the user
+          const addressField = document.querySelector('.form-field-container p');
+          if (addressField) {
+            addressField.innerText = 'Address autocomplete unavailable. Please enter your address manually.';
+            addressField.style.color = '#e53e3e';
+          }
+        });
 
       return () => {
-        // Clean up the script if component unmounts during loading
-        if (googleMapScript.parentNode) {
-          googleMapScript.parentNode.removeChild(googleMapScript);
+        // Clean up global callback if component unmounts
+        if (window.initGoogleMaps) {
+          window.initGoogleMaps = undefined;
         }
+        
+        // Remove loading indicator
+        const indicator = document.getElementById('maps-loading-indicator');
+        if (indicator) indicator.remove();
       };
     }
   }, [googleScriptLoaded, currentStep]);
@@ -159,25 +210,50 @@ const SequentialForm = () => {
   // Initialize Google Maps autocomplete
   useEffect(() => {
     if (googleScriptLoaded && currentStep === 3 && addressInputRef.current) {
-      autocompleteRef.current = new window.google.maps.places.Autocomplete(
-        addressInputRef.current,
-        { types: ['address'] }
-      );
-
-      // When a place is selected, update the form data
-      autocompleteRef.current.addListener('place_changed', () => {
-        const place = autocompleteRef.current.getPlace();
-        if (place.formatted_address) {
-          handleChange('address', place.formatted_address);
+      try {
+        // Check if Google Maps API is properly loaded
+        if (!window.google || !window.google.maps || !window.google.maps.places) {
+          console.error('Google Maps API not fully loaded');
+          return;
         }
-      });
+        
+        console.log('Initializing address autocomplete...');
+        
+        // Initialize autocomplete with options for better results
+        autocompleteRef.current = new window.google.maps.places.Autocomplete(
+          addressInputRef.current,
+          { 
+            types: ['address'],
+            componentRestrictions: { country: 'us' }, // Restrict to US addresses for better results
+            fields: ['formatted_address', 'address_components'] // Specify fields to improve performance
+          }
+        );
 
-      return () => {
-        // Clean up listeners when component unmounts or step changes
-        if (autocompleteRef.current) {
-          window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
+        // When a place is selected, update the form data
+        autocompleteRef.current.addListener('place_changed', () => {
+          const place = autocompleteRef.current.getPlace();
+          console.log('Place selected:', place);
+          
+          if (place && place.formatted_address) {
+            handleChange('address', place.formatted_address);
+          }
+        });
+
+        return () => {
+          // Clean up listeners when component unmounts or step changes
+          if (autocompleteRef.current) {
+            window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
+          }
+        };
+      } catch (error) {
+        console.error('Error initializing Google Maps autocomplete:', error);
+        // Provide feedback in the UI
+        const addressField = document.querySelector('.form-field-container p');
+        if (addressField) {
+          addressField.innerText = 'Address autocomplete unavailable. Please enter your address manually.';
+          addressField.style.color = '#e53e3e';
         }
-      };
+      }
     }
   }, [googleScriptLoaded, currentStep, handleChange]);
 
