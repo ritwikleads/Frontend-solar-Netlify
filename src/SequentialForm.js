@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { CheckCircle, Home, Phone, Mail, MapPin, Sun, Zap, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 
 const SequentialForm = () => {
@@ -39,6 +39,27 @@ const SequentialForm = () => {
   const [showSwipeHint, setShowSwipeHint] = useState(true);
   const [attemptedNext, setAttemptedNext] = useState(false);
 
+  // Initialize Google Places Autocomplete
+  const initializeAutocomplete = useCallback(() => {
+    if (window.google) {
+      const addressInput = document.getElementById('address-input');
+      if (addressInput) {
+        const autocomplete = new window.google.maps.places.Autocomplete(addressInput, {
+          types: ['address'],
+          componentRestrictions: { country: 'us' } // Restrict to US addresses
+        });
+
+        // Handle place selection
+        autocomplete.addListener('place_changed', () => {
+          const place = autocomplete.getPlace();
+          if (place.formatted_address) {
+            handleChange('address', place.formatted_address);
+          }
+        });
+      }
+    }
+  }, [handleChange]);
+
   // Google Maps Places Autocomplete
   useEffect(() => {
     // Only load the script when we're on the address step
@@ -58,35 +79,14 @@ const SequentialForm = () => {
         initializeAutocomplete();
       }
     }
-  }, [currentStep]);
-
-  // Initialize Google Places Autocomplete
-  const initializeAutocomplete = () => {
-    if (window.google) {
-      const addressInput = document.getElementById('address-input');
-      if (addressInput) {
-        const autocomplete = new window.google.maps.places.Autocomplete(addressInput, {
-          types: ['address'],
-          componentRestrictions: { country: 'us' } // Restrict to US addresses
-        });
-
-        // Handle place selection
-        autocomplete.addListener('place_changed', () => {
-          const place = autocomplete.getPlace();
-          if (place.formatted_address) {
-            handleChange('address', place.formatted_address);
-          }
-        });
-      }
-    }
-  };
+  }, [currentStep, initializeAutocomplete]);
 
   // Handle form field changes
-  const handleChange = (field, value) => {
-    setFormData({
-      ...formData,
+  const handleChange = useCallback((field, value) => {
+    setFormData(prevData => ({
+      ...prevData,
       [field]: value
-    });
+    }));
 
     // Validate the field
     let isValid = false;
@@ -158,16 +158,16 @@ const SequentialForm = () => {
         break;
     }
 
-    setValidation({
-      ...validation,
+    setValidation(prevValidation => ({
+      ...prevValidation,
       [field]: isValid
-    });
+    }));
 
-    setErrors({
-      ...errors,
+    setErrors(prevErrors => ({
+      ...prevErrors,
       [field]: errorMessage
-    });
-  };
+    }));
+  }, []);
 
   // Format phone number as user types
   const formatPhoneNumber = (value) => {
