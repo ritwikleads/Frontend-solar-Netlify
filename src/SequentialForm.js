@@ -42,31 +42,33 @@ const SequentialForm = () => {
   // Effect for Google Maps API autocomplete
   useEffect(() => {
     if (currentStep === 3) {
-      // Function to load Google Maps script
-      const loadGoogleMapsScript = () => {
-        // Get API key from environment variables
-        const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-        
-        // Check if API key exists without logging its value
-        if (!apiKey) {
-          console.error('Google Maps API key is missing. Check your environment variables.');
-          return;
+      // Function to fetch API key
+      const fetchApiKey = async () => {
+        try {
+          const response = await fetch('/api/config');
+          const config = await response.json();
+          if (config.googleMapsApiKey) {
+            loadGoogleMapsScript(config.googleMapsApiKey);
+          } else {
+            console.error('API key not available');
+          }
+        } catch (error) {
+          console.error('Error fetching config');
         }
-        
-        // Create script element
+      };
+
+      // Function to load Google Maps script
+      const loadGoogleMapsScript = (apiKey) => {
         const googleMapsScript = document.createElement('script');
         googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
         googleMapsScript.async = true;
         googleMapsScript.defer = true;
         
-        // Add error handling for script loading
         googleMapsScript.onerror = () => {
           console.error('Failed to load Google Maps script');
         };
         
         document.body.appendChild(googleMapsScript);
-        
-        // Initialize autocomplete once script is loaded
         googleMapsScript.onload = initAutocomplete;
       };
       
@@ -103,7 +105,8 @@ const SequentialForm = () => {
       if (window.google && window.google.maps && window.google.maps.places) {
         initAutocomplete();
       } else {
-        loadGoogleMapsScript();
+        // Initiate API key fetch
+        fetchApiKey();
       }
     }
   }, [currentStep]); // eslint-disable-line react-hooks/exhaustive-deps
