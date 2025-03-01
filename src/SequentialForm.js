@@ -42,16 +42,12 @@ const SequentialForm = () => {
   // Effect for Google Maps API autocomplete
   useEffect(() => {
     if (currentStep === 3) {
-      console.log('Address step reached, attempting to load Google Maps API');
-      
       // Function to load Google Maps script
       const loadGoogleMapsScript = () => {
         // Get API key from environment variables
         const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
         
-        // Debug log to check if API key is available
-        console.log('API Key available:', !!apiKey);
-        
+        // Check if API key exists without logging its value
         if (!apiKey) {
           console.error('Google Maps API key is missing. Check your environment variables.');
           return;
@@ -69,64 +65,44 @@ const SequentialForm = () => {
         };
         
         document.body.appendChild(googleMapsScript);
-        console.log('Google Maps script added to document');
         
         // Initialize autocomplete once script is loaded
-        googleMapsScript.onload = () => {
-          console.log('Google Maps script loaded successfully');
-          initAutocomplete();
-        };
+        googleMapsScript.onload = initAutocomplete;
       };
       
       // Function to initialize Google Places Autocomplete
       const initAutocomplete = () => {
-        console.log('Initializing autocomplete');
-        
         if (!window.google || !window.google.maps || !window.google.maps.places) {
           console.error('Google Maps API or Places library not loaded properly');
           return;
         }
         
         const input = document.getElementById('address-input');
-        if (!input) {
-          console.error('Could not find address input element');
-          return;
-        }
-        
-        console.log('Address input element found, setting up autocomplete');
+        if (!input) return;
         
         try {
           const autocomplete = new window.google.maps.places.Autocomplete(input, {
             types: ['address']
           });
           
-          console.log('Autocomplete initialized successfully');
-          
           // Handle place selection
           autocomplete.addListener('place_changed', () => {
             const place = autocomplete.getPlace();
-            console.log('Place selected:', place);
             
-            if (!place.geometry || !place.formatted_address) {
-              console.warn('No details available for this place');
-              return;
-            }
+            if (!place.geometry || !place.formatted_address) return;
             
             // Update form data with the selected address
             handleChange('address', place.formatted_address);
-            console.log('Address updated in form data');
           });
         } catch (error) {
-          console.error('Error initializing autocomplete:', error);
+          console.error('Error initializing autocomplete');
         }
       };
       
       // Check if Google Maps is already loaded
       if (window.google && window.google.maps && window.google.maps.places) {
-        console.log('Google Maps already loaded, initializing autocomplete directly');
         initAutocomplete();
       } else {
-        console.log('Loading Google Maps script');
         loadGoogleMapsScript();
       }
     }
