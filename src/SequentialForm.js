@@ -738,21 +738,12 @@ const SequentialForm = () => {
 
   return (
     <div 
-      className="min-h-screen bg-gradient-radial from-blue-50 to-white flex items-center justify-center p-4"
+      className="min-h-screen bg-gradient-radial from-blue-50 to-white flex items-start justify-center p-4 pt-8"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >
       <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative overflow-hidden">
-        {/* Company Logo and Name */}
-        <div className="flex flex-col items-center justify-center mb-6">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-2">
-            {/* Placeholder for logo */}
-            <span className="text-gray-500 text-xl">Logo</span>
-          </div>
-          <h1 className="text-xl font-bold text-center text-blue-600">Instant Solar Quote</h1>
-        </div>
-
         {/* Progress bar */}
         <div className="w-full h-2 bg-gray-200 rounded-full mb-6">
           <div
