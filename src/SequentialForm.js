@@ -42,16 +42,24 @@ const SequentialForm = () => {
   // Effect for Google Maps API autocomplete
   useEffect(() => {
     if (currentStep === 3) {
+      // Function to fetch API key
+      const fetchApiKey = async () => {
+        try {
+          const response = await fetch('/api/config');
+          const config = await response.json();
+          if (config.googleMapsApiKey) {
+            loadGoogleMapsScript(config.googleMapsApiKey);
+          } else {
+            console.error('API key not available');
+          }
+        } catch (error) {
+          console.error('Error fetching config');
+        }
+      };
+
       // Function to load Google Maps script
       const loadGoogleMapsScript = (apiKey) => {
-        // If script is already in the document, remove it to prevent duplicates
-        const existingScript = document.getElementById('google-maps-script');
-        if (existingScript) {
-          existingScript.remove();
-        }
-        
         const googleMapsScript = document.createElement('script');
-        googleMapsScript.id = 'google-maps-script';
         googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
         googleMapsScript.async = true;
         googleMapsScript.defer = true;
@@ -88,48 +96,17 @@ const SequentialForm = () => {
             // Update form data with the selected address
             handleChange('address', place.formatted_address);
           });
-          
-          // Update the helper text to show that autocomplete is active
-          const helperText = document.getElementById('address-helper-text');
-          if (helperText) {
-            helperText.textContent = 'Google Places autocomplete is active';
-          }
         } catch (error) {
           console.error('Error initializing autocomplete');
         }
       };
       
-      // For local development, you can directly use the API key from .env.local
-      const localApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-      
-      if (localApiKey) {
-        // We have a local API key, use it directly (for development)
-        loadGoogleMapsScript(localApiKey);
-      } else {
-        // Try to fetch from Netlify function (for production)
-        const fetchApiKey = async () => {
-          try {
-            const response = await fetch('/api/config');
-            if (!response.ok) {
-              throw new Error(`Failed to fetch API key: ${response.status}`);
-            }
-            const config = await response.json();
-            if (config.googleMapsApiKey) {
-              loadGoogleMapsScript(config.googleMapsApiKey);
-            } else {
-              console.error('API key not available from server');
-            }
-          } catch (error) {
-            console.error('Error loading API key');
-          }
-        };
-        
-        fetchApiKey();
-      }
-      
       // Check if Google Maps is already loaded
       if (window.google && window.google.maps && window.google.maps.places) {
         initAutocomplete();
+      } else {
+        // Initiate API key fetch
+        fetchApiKey();
       }
     }
   }, [currentStep]); // eslint-disable-line react-hooks/exhaustive-deps
