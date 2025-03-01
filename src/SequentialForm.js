@@ -39,13 +39,59 @@ const SequentialForm = () => {
   const [showSwipeHint, setShowSwipeHint] = useState(true);
   const [attemptedNext, setAttemptedNext] = useState(false);
 
-  // Simulated Google Maps API autocomplete
+  // Effect for Google Maps API autocomplete
   useEffect(() => {
     if (currentStep === 3) {
-      // In a real implementation, you would initialize the Google Maps autocomplete here
-      console.log('Google Maps API would initialize here');
+      // Function to load Google Maps script
+      const loadGoogleMapsScript = () => {
+        // Get API key from environment variables
+        const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+        
+        // Create script element
+        const googleMapsScript = document.createElement('script');
+        googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+        googleMapsScript.async = true;
+        googleMapsScript.defer = true;
+        document.body.appendChild(googleMapsScript);
+        
+        // Initialize autocomplete once script is loaded
+        googleMapsScript.onload = initAutocomplete;
+      };
+      
+      // Function to initialize Google Places Autocomplete
+      const initAutocomplete = () => {
+        if (!window.google) return;
+        
+        const input = document.getElementById('address-input');
+        if (!input) return;
+        
+        const autocomplete = new window.google.maps.places.Autocomplete(input, {
+          types: ['address'],
+          componentRestrictions: { country: 'us' } // Restrict to US addresses - remove or change as needed
+        });
+        
+        // Handle place selection
+        autocomplete.addListener('place_changed', () => {
+          const place = autocomplete.getPlace();
+          
+          if (!place.geometry || !place.formatted_address) {
+            console.log('No details available for this place');
+            return;
+          }
+          
+          // Update form data with the selected address
+          handleChange('address', place.formatted_address);
+        });
+      };
+      
+      // Check if Google Maps is already loaded
+      if (window.google && window.google.maps) {
+        initAutocomplete();
+      } else {
+        loadGoogleMapsScript();
+      }
     }
-  }, [currentStep]);
+  }, [currentStep]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle form field changes
   const handleChange = (field, value) => {
