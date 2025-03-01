@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { CheckCircle, Home, Phone, Mail, MapPin, Sun, Zap, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 
 const SequentialForm = () => {
@@ -65,12 +65,12 @@ const SequentialForm = () => {
     }
   }, [googleScriptLoaded, currentStep]);
 
-  // Handle form field changes
-  const handleChange = (field, value) => {
-    setFormData({
-      ...formData,
+  // Handle form field changes - wrapped in useCallback to prevent recreation on every render
+  const handleChange = useCallback((field, value) => {
+    setFormData(prevFormData => ({
+      ...prevFormData,
       [field]: value
-    });
+    }));
 
     // Validate the field
     let isValid = false;
@@ -142,16 +142,16 @@ const SequentialForm = () => {
         break;
     }
 
-    setValidation({
-      ...validation,
+    setValidation(prevValidation => ({
+      ...prevValidation,
       [field]: isValid
-    });
+    }));
 
-    setErrors({
-      ...errors,
+    setErrors(prevErrors => ({
+      ...prevErrors,
       [field]: errorMessage
-    });
-  };
+    }));
+  }, []);
 
   // Initialize Google Maps autocomplete
   useEffect(() => {
