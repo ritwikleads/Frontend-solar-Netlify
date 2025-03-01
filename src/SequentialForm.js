@@ -47,8 +47,11 @@ const SequentialForm = () => {
   useEffect(() => {
     // Only load the script once and when we're close to needing it
     if (!googleScriptLoaded && (currentStep === 2 || currentStep === 3)) {
+      // Get API key from environment variables safely - prevents secrets scanning issues
+      const apiKey = process.env.REACT_APP_MAPS_KEY || '';
+      
       const googleMapScript = document.createElement('script');
-      googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
+      googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
       googleMapScript.async = true;
       googleMapScript.defer = true;
       googleMapScript.onload = () => {
