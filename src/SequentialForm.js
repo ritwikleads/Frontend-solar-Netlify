@@ -42,52 +42,91 @@ const SequentialForm = () => {
   // Effect for Google Maps API autocomplete
   useEffect(() => {
     if (currentStep === 3) {
+      console.log('Address step reached, attempting to load Google Maps API');
+      
       // Function to load Google Maps script
       const loadGoogleMapsScript = () => {
         // Get API key from environment variables
         const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+        
+        // Debug log to check if API key is available
+        console.log('API Key available:', !!apiKey);
+        
+        if (!apiKey) {
+          console.error('Google Maps API key is missing. Check your environment variables.');
+          return;
+        }
         
         // Create script element
         const googleMapsScript = document.createElement('script');
         googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
         googleMapsScript.async = true;
         googleMapsScript.defer = true;
+        
+        // Add error handling for script loading
+        googleMapsScript.onerror = () => {
+          console.error('Failed to load Google Maps script');
+        };
+        
         document.body.appendChild(googleMapsScript);
+        console.log('Google Maps script added to document');
         
         // Initialize autocomplete once script is loaded
-        googleMapsScript.onload = initAutocomplete;
+        googleMapsScript.onload = () => {
+          console.log('Google Maps script loaded successfully');
+          initAutocomplete();
+        };
       };
       
       // Function to initialize Google Places Autocomplete
       const initAutocomplete = () => {
-        if (!window.google) return;
+        console.log('Initializing autocomplete');
+        
+        if (!window.google || !window.google.maps || !window.google.maps.places) {
+          console.error('Google Maps API or Places library not loaded properly');
+          return;
+        }
         
         const input = document.getElementById('address-input');
-        if (!input) return;
+        if (!input) {
+          console.error('Could not find address input element');
+          return;
+        }
         
-        const autocomplete = new window.google.maps.places.Autocomplete(input, {
-          types: ['address'],
-          componentRestrictions: { country: 'us' } // Restrict to US addresses - remove or change as needed
-        });
+        console.log('Address input element found, setting up autocomplete');
         
-        // Handle place selection
-        autocomplete.addListener('place_changed', () => {
-          const place = autocomplete.getPlace();
+        try {
+          const autocomplete = new window.google.maps.places.Autocomplete(input, {
+            types: ['address']
+          });
           
-          if (!place.geometry || !place.formatted_address) {
-            console.log('No details available for this place');
-            return;
-          }
+          console.log('Autocomplete initialized successfully');
           
-          // Update form data with the selected address
-          handleChange('address', place.formatted_address);
-        });
+          // Handle place selection
+          autocomplete.addListener('place_changed', () => {
+            const place = autocomplete.getPlace();
+            console.log('Place selected:', place);
+            
+            if (!place.geometry || !place.formatted_address) {
+              console.warn('No details available for this place');
+              return;
+            }
+            
+            // Update form data with the selected address
+            handleChange('address', place.formatted_address);
+            console.log('Address updated in form data');
+          });
+        } catch (error) {
+          console.error('Error initializing autocomplete:', error);
+        }
       };
       
       // Check if Google Maps is already loaded
-      if (window.google && window.google.maps) {
+      if (window.google && window.google.maps && window.google.maps.places) {
+        console.log('Google Maps already loaded, initializing autocomplete directly');
         initAutocomplete();
       } else {
+        console.log('Loading Google Maps script');
         loadGoogleMapsScript();
       }
     }
