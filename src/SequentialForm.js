@@ -65,31 +65,6 @@ const SequentialForm = () => {
     }
   }, [googleScriptLoaded, currentStep]);
 
-  // Initialize Google Maps autocomplete
-  useEffect(() => {
-    if (googleScriptLoaded && currentStep === 3 && addressInputRef.current) {
-      autocompleteRef.current = new window.google.maps.places.Autocomplete(
-        addressInputRef.current,
-        { types: ['address'] }
-      );
-
-      // When a place is selected, update the form data
-      autocompleteRef.current.addListener('place_changed', () => {
-        const place = autocompleteRef.current.getPlace();
-        if (place.formatted_address) {
-          handleChange('address', place.formatted_address);
-        }
-      });
-
-      return () => {
-        // Clean up listeners when component unmounts or step changes
-        if (autocompleteRef.current) {
-          window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
-        }
-      };
-    }
-  }, [googleScriptLoaded, currentStep]);
-
   // Handle form field changes
   const handleChange = (field, value) => {
     setFormData({
@@ -177,6 +152,31 @@ const SequentialForm = () => {
       [field]: errorMessage
     });
   };
+
+  // Initialize Google Maps autocomplete
+  useEffect(() => {
+    if (googleScriptLoaded && currentStep === 3 && addressInputRef.current) {
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(
+        addressInputRef.current,
+        { types: ['address'] }
+      );
+
+      // When a place is selected, update the form data
+      autocompleteRef.current.addListener('place_changed', () => {
+        const place = autocompleteRef.current.getPlace();
+        if (place.formatted_address) {
+          handleChange('address', place.formatted_address);
+        }
+      });
+
+      return () => {
+        // Clean up listeners when component unmounts or step changes
+        if (autocompleteRef.current) {
+          window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
+        }
+      };
+    }
+  }, [googleScriptLoaded, currentStep, handleChange]);
 
   // Format phone number as user types
   const formatPhoneNumber = (value) => {
