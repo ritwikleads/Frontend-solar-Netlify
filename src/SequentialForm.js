@@ -39,77 +39,47 @@ const SequentialForm = () => {
   const [showSwipeHint, setShowSwipeHint] = useState(true);
   const [attemptedNext, setAttemptedNext] = useState(false);
 
-  // Effect for Google Maps API autocomplete
+  // Google Maps Places Autocomplete
   useEffect(() => {
+    // Only load the script when we're on the address step
     if (currentStep === 3) {
-      // Function to fetch API key
-      const fetchApiKey = async () => {
-        try {
-          const response = await fetch('/api/config');
-          const config = await response.json();
-          if (config.googleMapsApiKey) {
-            loadGoogleMapsScript(config.googleMapsApiKey);
-          } else {
-            console.error('API key not available');
-          }
-        } catch (error) {
-          console.error('Error fetching config');
-        }
-      };
-
-      // Function to load Google Maps script
-      const loadGoogleMapsScript = (apiKey) => {
-        const googleMapsScript = document.createElement('script');
-        googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-        googleMapsScript.async = true;
-        googleMapsScript.defer = true;
-        
-        googleMapsScript.onerror = () => {
-          console.error('Failed to load Google Maps script');
-        };
-        
-        document.body.appendChild(googleMapsScript);
-        googleMapsScript.onload = initAutocomplete;
-      };
-      
-      // Function to initialize Google Places Autocomplete
-      const initAutocomplete = () => {
-        if (!window.google || !window.google.maps || !window.google.maps.places) {
-          console.error('Google Maps API or Places library not loaded properly');
-          return;
-        }
-        
-        const input = document.getElementById('address-input');
-        if (!input) return;
-        
-        try {
-          const autocomplete = new window.google.maps.places.Autocomplete(input, {
-            types: ['address']
-          });
-          
-          // Handle place selection
-          autocomplete.addListener('place_changed', () => {
-            const place = autocomplete.getPlace();
-            
-            if (!place.geometry || !place.formatted_address) return;
-            
-            // Update form data with the selected address
-            handleChange('address', place.formatted_address);
-          });
-        } catch (error) {
-          console.error('Error initializing autocomplete');
-        }
-      };
-      
-      // Check if Google Maps is already loaded
-      if (window.google && window.google.maps && window.google.maps.places) {
-        initAutocomplete();
+      // Check if the script is already loaded
+      if (!window.google) {
+        // Create script element
+        const script = document.createElement('script');
+        const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        script.onload = initializeAutocomplete;
+        document.head.appendChild(script);
       } else {
-        // Initiate API key fetch
-        fetchApiKey();
+        // If script is already loaded, just initialize autocomplete
+        initializeAutocomplete();
       }
     }
-  }, [currentStep]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentStep]);
+
+  // Initialize Google Places Autocomplete
+  const initializeAutocomplete = () => {
+    if (window.google) {
+      const addressInput = document.getElementById('address-input');
+      if (addressInput) {
+        const autocomplete = new window.google.maps.places.Autocomplete(addressInput, {
+          types: ['address'],
+          componentRestrictions: { country: 'us' } // Restrict to US addresses
+        });
+
+        // Handle place selection
+        autocomplete.addListener('place_changed', () => {
+          const place = autocomplete.getPlace();
+          if (place.formatted_address) {
+            handleChange('address', place.formatted_address);
+          }
+        });
+      }
+    }
+  };
 
   // Handle form field changes
   const handleChange = (field, value) => {
@@ -397,6 +367,7 @@ const SequentialForm = () => {
               </div>
             </label>
             <input
+              id="address-input" // Added ID for Google Autocomplete to target
               type="text"
               value={formData.address}
               onChange={(e) => handleChange('address', e.target.value)}
@@ -410,7 +381,7 @@ const SequentialForm = () => {
               placeholder="Start typing your address..."
             />
             <p className="text-sm text-gray-500 mt-1">
-              With Google autocomplete (simulated)
+              Using Google Maps autocomplete
             </p>
             {attemptedNext && errors.address && (
               <div className="text-red-500 mt-2 flex items-center">
