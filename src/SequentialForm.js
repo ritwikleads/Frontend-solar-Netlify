@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CheckCircle, Home, Phone, Mail, MapPin, Sun, Zap, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 
 const SequentialForm = () => {
@@ -39,54 +39,63 @@ const SequentialForm = () => {
   const [showSwipeHint, setShowSwipeHint] = useState(true);
   const [attemptedNext, setAttemptedNext] = useState(false);
 
-  // Initialize Google Places Autocomplete
-  const initializeAutocomplete = useCallback(() => {
-    if (window.google) {
-      const addressInput = document.getElementById('address-input');
-      if (addressInput) {
-        const autocomplete = new window.google.maps.places.Autocomplete(addressInput, {
-          types: ['address'],
-          componentRestrictions: { country: 'us' } // Restrict to US addresses
-        });
+  const [googleScriptLoaded, setGoogleScriptLoaded] = useState(false);
+  const addressInputRef = useRef(null);
+  const autocompleteRef = useRef(null);
 
-        // Handle place selection
-        autocomplete.addListener('place_changed', () => {
-          const place = autocomplete.getPlace();
-          if (place.formatted_address) {
-            handleChange('address', place.formatted_address);
-          }
-        });
-      }
-    }
-  }, [handleChange]);
-
-  // Google Maps Places Autocomplete
+  // Load Google Maps API script
   useEffect(() => {
-    // Only load the script when we're on the address step
-    if (currentStep === 3) {
-      // Check if the script is already loaded
-      if (!window.google) {
-        // Create script element
-        const script = document.createElement('script');
-        const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-        script.async = true;
-        script.defer = true;
-        script.onload = initializeAutocomplete;
-        document.head.appendChild(script);
-      } else {
-        // If script is already loaded, just initialize autocomplete
-        initializeAutocomplete();
-      }
+    // Only load the script once and when we're close to needing it
+    if (!googleScriptLoaded && (currentStep === 2 || currentStep === 3)) {
+      const googleMapScript = document.createElement('script');
+      googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
+      googleMapScript.async = true;
+      googleMapScript.defer = true;
+      googleMapScript.onload = () => {
+        setGoogleScriptLoaded(true);
+      };
+      window.document.body.appendChild(googleMapScript);
+
+      return () => {
+        // Clean up the script if component unmounts during loading
+        if (googleMapScript.parentNode) {
+          googleMapScript.parentNode.removeChild(googleMapScript);
+        }
+      };
     }
-  }, [currentStep, initializeAutocomplete]);
+  }, [googleScriptLoaded, currentStep]);
+
+  // Initialize Google Maps autocomplete
+  useEffect(() => {
+    if (googleScriptLoaded && currentStep === 3 && addressInputRef.current) {
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(
+        addressInputRef.current,
+        { types: ['address'] }
+      );
+
+      // When a place is selected, update the form data
+      autocompleteRef.current.addListener('place_changed', () => {
+        const place = autocompleteRef.current.getPlace();
+        if (place.formatted_address) {
+          handleChange('address', place.formatted_address);
+        }
+      });
+
+      return () => {
+        // Clean up listeners when component unmounts or step changes
+        if (autocompleteRef.current) {
+          window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
+        }
+      };
+    }
+  }, [googleScriptLoaded, currentStep]);
 
   // Handle form field changes
-  const handleChange = useCallback((field, value) => {
-    setFormData(prevData => ({
-      ...prevData,
+  const handleChange = (field, value) => {
+    setFormData({
+      ...formData,
       [field]: value
-    }));
+    });
 
     // Validate the field
     let isValid = false;
@@ -158,16 +167,16 @@ const SequentialForm = () => {
         break;
     }
 
-    setValidation(prevValidation => ({
-      ...prevValidation,
+    setValidation({
+      ...validation,
       [field]: isValid
-    }));
+    });
 
-    setErrors(prevErrors => ({
-      ...prevErrors,
+    setErrors({
+      ...errors,
       [field]: errorMessage
-    }));
-  }, []);
+    });
+  };
 
   // Format phone number as user types
   const formatPhoneNumber = (value) => {
@@ -367,10 +376,10 @@ const SequentialForm = () => {
               </div>
             </label>
             <input
-              id="address-input" // Added ID for Google Autocomplete to target
               type="text"
               value={formData.address}
               onChange={(e) => handleChange('address', e.target.value)}
+              ref={addressInputRef}
               className={`w-full p-3 rounded-lg border-2 ${
                 validation.address 
                   ? 'border-green-500' 
@@ -381,7 +390,7 @@ const SequentialForm = () => {
               placeholder="Start typing your address..."
             />
             <p className="text-sm text-gray-500 mt-1">
-              Using Google Maps autocomplete
+              {googleScriptLoaded ? "Start typing for suggestions" : "Loading Google Maps..."}
             </p>
             {attemptedNext && errors.address && (
               <div className="text-red-500 mt-2 flex items-center">
