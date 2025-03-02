@@ -47,8 +47,16 @@ const SequentialForm = () => {
   useEffect(() => {
     // Only load the script once and when we're close to needing it
     if (!googleScriptLoaded && (currentStep === 2 || currentStep === 3)) {
-      // Fetch the API key from the backend
-      fetch('https://backend-code-vercel-k2nf9mi3d-ritwik-singhs-projects-c0425c8d.vercel.app/api/maps-key')
+      // Add loading indicator for better UX
+      const loadingIndicator = document.createElement('p');
+      loadingIndicator.id = 'maps-loading-indicator';
+      loadingIndicator.innerText = 'Loading Google Maps...';
+      loadingIndicator.style.color = '#666';
+      loadingIndicator.style.fontSize = '14px';
+      loadingIndicator.style.margin = '5px 0';
+      
+      // Fetch the API key from our secure Netlify Function
+      fetch('/.netlify/functions/get-maps-key')
         .then(response => {
           if (!response.ok) {
             throw new Error(`API key fetch failed with status: ${response.status}`);
@@ -297,31 +305,12 @@ const SequentialForm = () => {
     if (currentStep === 7) {
       setIsSubmitting(true);
       
-      // Send data to the API endpoint
-      fetch('https://backend-code-vercel-k2nf9mi3d-ritwik-singhs-projects-c0425c8d.vercel.app/api/submit-form', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Server responded with status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Form submitted successfully:', data);
+      // Simulate form submission
+      setTimeout(() => {
+        console.log('Form submitted:', formData);
         setIsSubmitting(false);
         setCurrentStep(8); // Move to thank you page after submission
-      })
-      .catch(error => {
-        console.error('Error submitting form:', error);
-        setIsSubmitting(false);
-        // You could add error handling/display here
-        alert('There was an error submitting your form. Please try again.');
-      });
+      }, 2000);
     }
   };
 
