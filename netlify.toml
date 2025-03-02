@@ -1,10 +1,6 @@
 [build]
-  command = "npm run build"
-  publish = "build"
-  functions = "functions"
+  command = "npm run build"  # or your build command
+  publish = "build"  # or your build output directory
 
-[dev]
-  command = "npm start"
-  port = 8888
-  publish = "build"
-  functions = "functions"
+[functions]
+  directory = "netlify/functions"
