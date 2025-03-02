@@ -536,133 +536,22 @@ const SequentialForm = () => {
               </div>
             </label>
             
-            {/* SVG images for roof types */}
+            {/* Simple colored squares for roof types */}
             <div className="flex justify-center my-4 h-32">
               {formData.roofType === 'flat' && (
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 272.96 167.19" className="h-full">
-                  <defs>
-                    <style>
-                      {`.cls-1{fill:#fff;}.cls-2,.cls-7{fill:#f76f72;}.cls-3,.cls-6{fill:#ebecec;}.cls-4{fill:#fccccc;}.cls-5{fill:none;}.cls-5,.cls-6,.cls-7{stroke:#4b4b4c;stroke-linecap:round;stroke-linejoin:round;stroke-width:6px;}`}
-                    </style>
-                  </defs>
-                  <g id="Layer_2" data-name="Layer 2">
-                    <g id="Stroke">
-                      <path className="cls-1" d="M16.25,82.75v81.44H71.73V82.75Zm29.33,53.94a7.41,7.41,0,0,1-4.54-1.3,6.46,6.46,0,0,1-2.75-.26,6.31,6.31,0,0,1-2.9-1.53,6.36,6.36,0,0,1-2.2-2.4,14,14,0,0,1-1.07-2.63,19.8,19.8,0,0,1-.39-2.87,5.32,5.32,0,0,1,0-.89c.09-1,.22-1.93.4-2.88a5.6,5.6,0,0,1,.63-1.71,9.89,9.89,0,0,1,0-1.44,21.07,21.07,0,0,1,1.1-5.41c0-.5,0-1,0-1.52a8.24,8.24,0,0,1,2.73-6.16c.12-.12.24-.22.37-.33l.28-.21a7.62,7.62,0,0,1,.89-.59l.41-.23.4-.19a9.35,9.35,0,0,1,3.46-.83c5.53-.39,9.69,4.47,10.53,9.49a9.31,9.31,0,0,1,.58,1.43,13,13,0,0,1,.13,6.42c-.05.28-.2,1.19-.39,1.87.07.28.13.56.2.82a24.3,24.3,0,0,1,.72,4.81C54.39,132.92,50,136.49,45.58,136.69Z"></path>
-                      <polygon className="cls-2" points="190.29 82.95 212.85 66.72 269.29 67.17 269.29 164.19 245.32 164.19 243.67 83.95 190.29 82.95"></polygon>
-                      <polygon className="cls-3" points="23.68 33.3 3 82.75 70.97 82.75 71.05 50.53 54.35 48.49 64.83 33.3 23.68 33.3"></polygon>
-                      <polygon className="cls-1" points="71.73 164.19 155.69 164.19 155.73 48.49 113.01 0.98 71.05 50.53 71.73 164.19"></polygon>
-                      <path className="cls-3" d="M107.37,2.23C107.37,2.69,156,51.3,156,51.3l55-1L161.11.78Z"></path>
-                      <polyline className="cls-3" points="155.69 164.19 155.73 48.49 201.85 49.16 201.85 73.97 188.21 82.95 188.21 97.95 188.21 164.19 156.44 164.68"></polyline>
-                      <polygon className="cls-3" points="115.23 125.46 136.48 125.46 136.48 64.21 127.7 64.21 115.23 125.46"></polygon>
-                      <polygon className="cls-3" points="54.35 48.49 70.97 48.49 117.32 13.42 104.14 3 54.35 48.49"></polygon>
-                      <rect className="cls-4" x="188.21" y="83.95" width="55.46" height="80.24"></rect>
-                      <path className="cls-1" d="M207.57,133.32h19.12l-.11-25.58s-9.4-13.67-19.26,0Z"></path>
-                      <polyline className="cls-5" points="55.97 82.75 16.25 82.75 16.25 164.19 70.97 164.19 70.97 82.75"></polyline>
-                      <polyline className="cls-5" points="27.89 82.75 3 82.75 23.68 33.3 64.83 33.3"></polyline>
-                      <line className="cls-5" x1="70.97" y1="48.49" x2="70.97" y2="94.71"></line>
-                      <polyline className="cls-5" points="104.14 3 154.73 48.49 181.26 48.49 212.85 48.49 160.9 3 104.14 3 52.87 48.49 70.97 48.49"></polyline>
-                      <line className="cls-5" x1="16.25" y1="164.19" x2="269.96" y2="164.19"></line>
-                      <line className="cls-5" x1="201.85" y1="49.49" x2="201.85" y2="73.97"></line>
-                      <line className="cls-5" x1="155.69" y1="63.49" x2="155.69" y2="164.19"></line>
-                      <line className="cls-5" x1="245.32" y1="83.95" x2="245.32" y2="164.19"></line>
-                      <polyline className="cls-5" points="269.96 164.19 269.96 66.72 245.32 82.95"></polyline>
-                      <line className="cls-5" x1="212.85" y1="66.73" x2="188.21" y2="82.95"></line>
-                      <line className="cls-5" x1="188.21" y1="164.19" x2="188.21" y2="97.95"></line>
-                      <line className="cls-5" x1="188.21" y1="82.95" x2="245.32" y2="82.95"></line>
-                      <line className="cls-5" x1="212.85" y1="66.73" x2="269.96" y2="66.73"></line>
-                      <path className="cls-6" d="M52.84,111.76a9.56,9.56,0,0,0-19.12,0v22H52.84Z"></path>
-                      <path className="cls-7" d="M226.33,113.27v-1.51a9.56,9.56,0,0,0-19.12,0v21h19.12V113.27Z"></path>
-                      <line className="cls-5" x1="103.16" y1="24.77" x2="70.97" y2="48.49"></line>
-                      <rect className="cls-5" x="89.07" y="64.21" width="47.88" height="61.25"></rect>
-                      <line className="cls-5" x1="89.07" y1="94.83" x2="124.95" y2="94.83"></line>
-                      <line className="cls-5" x1="113.01" y1="125.46" x2="113.01" y2="76.21"></line>
-                    </g>
-                  </g>
-                </svg>
+                <div className="h-full w-64 bg-blue-400 rounded-lg flex items-center justify-center text-white font-bold">
+                  Flat Roof
+                </div>
               )}
               {formData.roofType === 'pitched' && (
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 272.96 167.19" className="h-full">
-                  <defs>
-                    <style>
-                      {`.cls-1{fill:#fff;}.cls-2,.cls-6{fill:#ebecec;}.cls-3{fill:#fccccc;}.cls-4{fill:#f76f72;}.cls-5{fill:none;}.cls-5,.cls-6{stroke:#4b4b4c;stroke-linecap:round;stroke-linejoin:round;stroke-width:6px;}`}
-                    </style>
-                  </defs>
-                  <g id="Layer_2" data-name="Layer 2">
-                    <g id="Stroke">
-                      <path className="cls-1" d="M16.25,82.75v81.44H71.73V82.75Zm29.33,53.94a7.41,7.41,0,0,1-4.54-1.3,6.46,6.46,0,0,1-2.75-.26,6.31,6.31,0,0,1-2.9-1.53,6.36,6.36,0,0,1-2.2-2.4,14,14,0,0,1-1.07-2.63,19.8,19.8,0,0,1-.39-2.87,5.32,5.32,0,0,1,0-.89c.09-1,.22-1.93.4-2.88a5.6,5.6,0,0,1,.63-1.71,9.89,9.89,0,0,1,0-1.44,21.07,21.07,0,0,1,1.1-5.41c0-.5,0-1,0-1.52a8.24,8.24,0,0,1,2.73-6.16c.12-.12.24-.22.37-.33l.28-.21a7.62,7.62,0,0,1,.89-.59l.41-.23.4-.19a9.35,9.35,0,0,1,3.46-.83c5.53-.39,9.69,4.47,10.53,9.49a9.31,9.31,0,0,1,.58,1.43,13,13,0,0,1,.13,6.42c-.05.28-.2,1.19-.39,1.87.07.28.13.56.2.82a24.3,24.3,0,0,1,.72,4.81C54.39,132.92,50,136.49,45.58,136.69Z"></path>
-                      <polygon className="cls-2" points="190.29 82.95 212.85 66.72 269.29 67.17 269.29 164.19 245.32 164.19 243.67 83.95 190.29 82.95"></polygon>
-                      <polygon className="cls-2" points="23.68 33.3 3 82.75 70.97 82.75 71.05 50.53 54.35 48.49 64.83 33.3 23.68 33.3"></polygon>
-                      <polygon className="cls-3" points="71.73 164.19 155.69 164.19 155.73 48.49 113.01 0.98 71.05 50.53 71.73 164.19"></polygon>
-                      <path className="cls-4" d="M107.37,2.23C107.37,2.69,156,51.3,156,51.3l55-1L161.11.78Z"></path>
-                      <polyline className="cls-4" points="155.69 164.19 155.73 48.49 201.85 49.16 201.85 73.97 188.21 82.95 188.21 97.95 188.21 164.19 156.44 164.68"></polyline>
-                      <polygon className="cls-4" points="115.23 125.46 136.48 125.46 136.48 64.21 127.7 64.21 115.23 125.46"></polygon>
-                      <polygon className="cls-4" points="54.35 48.49 70.97 48.49 117.32 13.42 104.14 3 54.35 48.49"></polygon>
-                      <rect className="cls-1" x="188.21" y="83.95" width="55.46" height="80.24"></rect>
-                      <path className="cls-1" d="M207.57,133.32h19.12l-.11-25.58s-9.4-13.67-19.26,0Z"></path>
-                      <polyline className="cls-5" points="55.97 82.75 16.25 82.75 16.25 164.19 70.97 164.19 70.97 82.75"></polyline>
-                      <polyline className="cls-5" points="27.89 82.75 3 82.75 23.68 33.3 64.83 33.3"></polyline>
-                      <line className="cls-5" x1="70.97" y1="48.49" x2="70.97" y2="94.71"></line>
-                      <polyline className="cls-5" points="104.14 3 154.73 48.49 181.26 48.49 212.85 48.49 160.9 3 104.14 3 52.87 48.49 70.97 48.49"></polyline>
-                      <line className="cls-5" x1="16.25" y1="164.19" x2="269.96" y2="164.19"></line>
-                      <line className="cls-5" x1="201.85" y1="49.49" x2="201.85" y2="73.97"></line>
-                      <line className="cls-5" x1="155.69" y1="63.49" x2="155.69" y2="164.19"></line>
-                      <line className="cls-5" x1="245.32" y1="83.95" x2="245.32" y2="164.19"></line>
-                      <polyline className="cls-5" points="269.96 164.19 269.96 66.72 245.32 82.95"></polyline>
-                      <line className="cls-5" x1="212.85" y1="66.73" x2="188.21" y2="82.95"></line>
-                      <line className="cls-5" x1="188.21" y1="164.19" x2="188.21" y2="97.95"></line>
-                      <line className="cls-5" x1="188.21" y1="82.95" x2="245.32" y2="82.95"></line>
-                      <line className="cls-5" x1="212.85" y1="66.73" x2="269.96" y2="66.73"></line>
-                      <path className="cls-6" d="M52.84,111.76a9.56,9.56,0,0,0-19.12,0v22H52.84Z"></path>
-                      <path className="cls-6" d="M226.33,113.27v-1.51a9.56,9.56,0,0,0-19.12,0v21h19.12V113.27Z"></path>
-                      <line className="cls-5" x1="103.16" y1="24.77" x2="70.97" y2="48.49"></line>
-                      <rect className="cls-5" x="89.07" y="64.21" width="47.88" height="61.25"></rect>
-                      <line className="cls-5" x1="89.07" y1="94.83" x2="124.95" y2="94.83"></line>
-                      <line className="cls-5" x1="113.01" y1="125.46" x2="113.01" y2="76.21"></line>
-                    </g>
-                  </g>
-                </svg>
+                <div className="h-full w-64 bg-green-400 rounded-lg flex items-center justify-center text-white font-bold">
+                  Pitched Roof
+                </div>
               )}
               {formData.roofType === 'steep-pitched' && (
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 272.96 167.19" className="h-full">
-                  <defs>
-                    <style>
-                      {`.cls-1{fill:#fccccc;}.cls-2,.cls-7{fill:#ebecec;}.cls-3,.cls-6{fill:#f76f72;}.cls-4{fill:#fff;}.cls-5{fill:none;}.cls-5,.cls-6,.cls-7{stroke:#4b4b4c;stroke-linecap:round;stroke-linejoin:round;stroke-width:6px;}`}
-                    </style>
-                  </defs>
-                  <g id="Layer_2" data-name="Layer 2">
-                    <g id="Stroke">
-                      <path className="cls-1" d="M16.25,82.75v81.44H71.73V82.75Zm29.33,53.94a7.41,7.41,0,0,1-4.54-1.3,6.46,6.46,0,0,1-2.75-.26,6.31,6.31,0,0,1-2.9-1.53,6.36,6.36,0,0,1-2.2-2.4,14,14,0,0,1-1.07-2.63,19.8,19.8,0,0,1-.39-2.87,5.32,5.32,0,0,1,0-.89c.09-1,.22-1.93.4-2.88a5.6,5.6,0,0,1,.63-1.71,9.89,9.89,0,0,1,0-1.44,21.07,21.07,0,0,1,1.1-5.41c0-.5,0-1,0-1.52a8.24,8.24,0,0,1,2.73-6.16c.12-.12.24-.22.37-.33l.28-.21a7.62,7.62,0,0,1,.89-.59l.41-.23.4-.19a9.35,9.35,0,0,1,3.46-.83c5.53-.39,9.69,4.47,10.53,9.49a9.31,9.31,0,0,1,.58,1.43,13,13,0,0,1,.13,6.42c-.05.28-.2,1.19-.39,1.87.07.28.13.56.2.82a24.3,24.3,0,0,1,.72,4.81C54.39,132.92,50,136.49,45.58,136.69Z"></path>
-                      <polygon className="cls-2" points="190.29 82.95 212.85 66.72 269.29 67.17 269.29 164.19 245.32 164.19 243.67 83.95 190.29 82.95"></polygon>
-                      <polygon className="cls-3" points="23.68 33.3 3 82.75 70.97 82.75 71.05 50.53 54.35 48.49 64.83 33.3 23.68 33.3"></polygon>
-                      <polygon className="cls-4" points="71.73 164.19 155.69 164.19 155.73 48.49 113.01 0.98 71.05 50.53 71.73 164.19"></polygon>
-                      <path className="cls-2" d="M107.37,2.23C107.37,2.69,156,51.3,156,51.3l55-1L161.11.78Z"></path>
-                      <polyline className="cls-2" points="155.69 164.19 155.73 48.49 201.85 49.16 201.85 73.97 188.21 82.95 188.21 97.95 188.21 164.19 156.44 164.68"></polyline>
-                      <polygon className="cls-2" points="115.23 125.46 136.48 125.46 136.48 64.21 127.7 64.21 115.23 125.46"></polygon>
-                      <polygon className="cls-2" points="54.35 48.49 70.97 48.49 117.32 13.42 104.14 3 54.35 48.49"></polygon>
-                      <rect className="cls-4" x="188.21" y="83.95" width="55.46" height="80.24"></rect>
-                      <path className="cls-4" d="M207.57,133.32h19.12l-.11-25.58s-9.4-13.67-19.26,0Z"></path>
-                      <polyline className="cls-5" points="55.97 82.75 16.25 82.75 16.25 164.19 70.97 164.19 70.97 82.75"></polyline>
-                      <polyline className="cls-5" points="27.89 82.75 3 82.75 23.68 33.3 64.83 33.3"></polyline>
-                      <line className="cls-5" x1="70.97" y1="48.49" x2="70.97" y2="94.71"></line>
-                      <polyline className="cls-5" points="104.14 3 154.73 48.49 181.26 48.49 212.85 48.49 160.9 3 104.14 3 52.87 48.49 70.97 48.49"></polyline>
-                      <line className="cls-5" x1="16.25" y1="164.19" x2="269.96" y2="164.19"></line>
-                      <line className="cls-5" x1="201.85" y1="49.49" x2="201.85" y2="73.97"></line>
-                      <line className="cls-5" x1="155.69" y1="63.49" x2="155.69" y2="164.19"></line>
-                      <line className="cls-5" x1="245.32" y1="83.95" x2="245.32" y2="164.19"></line>
-                      <polyline className="cls-5" points="269.96 164.19 269.96 66.72 245.32 82.95"></polyline>
-                      <line className="cls-5" x1="212.85" y1="66.73" x2="188.21" y2="82.95"></line>
-                      <line className="cls-5" x1="188.21" y1="164.19" x2="188.21" y2="97.95"></line>
-                      <line className="cls-5" x1="188.21" y1="82.95" x2="245.32" y2="82.95"></line>
-                      <line className="cls-5" x1="212.85" y1="66.73" x2="269.96" y2="66.73"></line>
-                      <path className="cls-6" d="M52.84,111.76a9.56,9.56,0,0,0-19.12,0v22H52.84Z"></path>
-                      <path className="cls-7" d="M226.33,113.27v-1.51a9.56,9.56,0,0,0-19.12,0v21h19.12V113.27Z"></path>
-                      <line className="cls-5" x1="103.16" y1="24.77" x2="70.97" y2="48.49"></line>
-                      <rect className="cls-5" x="89.07" y="64.21" width="47.88" height="61.25"></rect>
-                      <line className="cls-5" x1="89.07" y1="94.83" x2="124.95" y2="94.83"></line>
-                      <line className="cls-5" x1="113.01" y1="125.46" x2="113.01" y2="76.21"></line>
-                    </g>
-                  </g>
-                </svg>
+                <div className="h-full w-64 bg-red-400 rounded-lg flex items-center justify-center text-white font-bold">
+                  Steep-Pitched Roof
+                </div>
               )}
               {!formData.roofType && (
                 <div className="h-full w-32 border-2 border-dashed border-gray-300 rounded flex items-center justify-center">
@@ -729,48 +618,27 @@ const SequentialForm = () => {
               </div>
             </label>
             
-            {/* SVG images for sunlight options */}
+            {/* Simple colored squares for sunlight options */}
             <div className="flex justify-center my-4 h-32">
               {formData.sunlight === 'full' && (
-                <svg viewBox="0 0 200 100" className="h-full">
-                  <rect x="40" y="50" width="120" height="50" fill="#a0aec0" />
-                  <polygon points="40,50 100,20 160,50" fill="#4a5568" />
-                  <circle cx="160" cy="30" r="15" fill="#FFEB3B" />
-                  <line x1="160" y1="5" x2="160" y2="15" stroke="#FFEB3B" strokeWidth="2" />
-                  <line x1="160" y1="45" x2="160" y2="55" stroke="#FFEB3B" strokeWidth="2" />
-                  <line x1="145" y1="30" x2="135" y2="30" stroke="#FFEB3B" strokeWidth="2" />
-                  <line x1="185" y1="30" x2="175" y2="30" stroke="#FFEB3B" strokeWidth="2" />
-                  <line x1="150" y1="20" x2="142" y2="12" stroke="#FFEB3B" strokeWidth="2" />
-                  <line x1="170" y1="20" x2="178" y2="12" stroke="#FFEB3B" strokeWidth="2" />
-                  <line x1="150" y1="40" x2="142" y2="48" stroke="#FFEB3B" strokeWidth="2" />
-                  <line x1="170" y1="40" x2="178" y2="48" stroke="#FFEB3B" strokeWidth="2" />
-                </svg>
+                <div className="h-full w-64 bg-yellow-400 rounded-lg flex items-center justify-center text-white font-bold">
+                  Full Sunlight
+                </div>
               )}
               {formData.sunlight === 'partial' && (
-                <svg viewBox="0 0 200 100" className="h-full">
-                  <rect x="40" y="50" width="120" height="50" fill="#a0aec0" />
-                  <polygon points="40,50 100,20 160,50" fill="#4a5568" />
-                  <circle cx="160" cy="30" r="15" fill="#FFEB3B" />
-                  <path d="M130,15 L180,15 L180,45 L130,45 Z" fill="#a0aec0" fillOpacity="0.5" />
-                  <line x1="160" y1="5" x2="160" y2="15" stroke="#FFEB3B" strokeWidth="2" />
-                  <line x1="160" y1="45" x2="160" y2="55" stroke="#FFEB3B" strokeWidth="2" strokeOpacity="0.5" />
-                </svg>
+                <div className="h-full w-64 bg-yellow-200 rounded-lg flex items-center justify-center text-gray-700 font-bold">
+                  Partial Sunlight
+                </div>
               )}
               {formData.sunlight === 'little' && (
-                <svg viewBox="0 0 200 100" className="h-full">
-                  <rect x="40" y="50" width="120" height="50" fill="#a0aec0" />
-                  <polygon points="40,50 100,20 160,50" fill="#4a5568" />
-                  <circle cx="160" cy="30" r="15" fill="#FFEB3B" />
-                  <rect x="120" y="5" width="70" height="60" fill="#718096" fillOpacity="0.7" />
-                  <path d="M120,5 L145,20 L145,50 L120,65 Z" fill="#2D3748" fillOpacity="0.7" />
-                </svg>
+                <div className="h-full w-64 bg-gray-400 rounded-lg flex items-center justify-center text-white font-bold">
+                  Little Sunlight
+                </div>
               )}
               {!formData.sunlight && (
-                <svg viewBox="0 0 200 100" className="h-full">
-                  <rect x="40" y="50" width="120" height="50" fill="#e2e8f0" stroke="#a0aec0" strokeWidth="2" strokeDasharray="5,5" />
-                  <polygon points="40,50 100,20 160,50" fill="#e2e8f0" stroke="#a0aec0" strokeWidth="2" strokeDasharray="5,5" />
-                  <circle cx="160" cy="30" r="15" fill="#e2e8f0" stroke="#a0aec0" strokeWidth="2" strokeDasharray="5,5" />
-                </svg>
+                <div className="h-full w-64 border-2 border-dashed border-gray-300 rounded flex items-center justify-center">
+                  <Sun size={32} className="text-gray-400" />
+                </div>
               )}
             </div>
             
